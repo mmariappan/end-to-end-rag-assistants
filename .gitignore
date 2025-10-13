@@ -1,0 +1,59 @@
+# Virtual Environment
+docrag_env/
+RAGAppOne_env/
+venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
+
+# Data files
+data/*.pdf
+data/*.csv
+data/*.json
+data/*.txt
+chapter_summaries.txt
+
+# ChromaDB (will be recreated on cloud)
+chroma_db/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Test files
+test_*.py
+tests/
+
+# Build artifacts
+*.pyc
+*.pyo
+
+# Architecture diagrams (HTML versions)
+architecture_diagram*.html

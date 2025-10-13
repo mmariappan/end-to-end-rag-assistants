@@ -1,0 +1,28 @@
+# Core Application Dependencies
+# Generated based on actual imports in code
+
+# Web Framework
+streamlit>=1.40.0
+
+# AI & LLM
+openai>=2.0.0
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Data Processing
+pandas>=2.0.0
+numpy<2.0.0
+
+# PDF Processing
+PyMuPDF>=1.24.0
+
+# NLP & Text Processing
+nltk>=3.9.0
+sentence-transformers>=3.0.0
+
+# Vector Database
+chromadb==1.1.0
+
+# HTTP Requests
+requests>=2.32.0
