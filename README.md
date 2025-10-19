@@ -381,7 +381,7 @@ Dataset of queries
 | Response Fluency               | 0.88            | 0.93                   |
 | Query Refinement Effectiveness | —               | +25%                   |
 
-### 🚀 3. Scaling Objectives (Planned)
+### 🚀 3. Scaling Objectives
 
 | Goal                                        | Description                                                                                              |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
