@@ -57,3 +57,6 @@ tests/
 
 # Architecture diagrams (HTML versions)
 architecture_diagram*.html
+
+# AI Assistant Documentation
+CLAUDE.md
