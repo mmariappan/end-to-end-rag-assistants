@@ -52,7 +52,7 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 
 ## 🏗️ Architecture
 
-![RAG PDF Chat Architecture](RAG_PDF_Chat_Architecture.png)
+![RAG PDF Chat Architecture](images/RAG_PDF_Chat_Architecture.png)
 
 | Component                | Description                          |
 | ------------------------ | ------------------------------------ |
@@ -99,23 +99,6 @@ Create a `.env` file:
 OPENAI_API_KEY=your_openai_api_key
 TOKENIZERS_PARALLELISM=false
 ```
-
-### 3️⃣ Run the App
-
-```bash
-streamlit run app.py
-```
-
-Visit [http://localhost:8501](http://localhost:8501)
-
----
-
-## 💡 Usage
-
-1. **Upload a PDF** → it’s automatically chunked and stored in ChromaDB
-2. **Ask a Question** → GPT model retrieves relevant context and answers
-3. **Inspect Sources** → see the exact text chunks used
-4. **Re-upload Docs** → deduplication skips previously processed content
 
 ---
 
@@ -444,6 +427,52 @@ User Query
 - **Serverless Functions:** Offload reflection and summarization tasks to AWS Lambda or GCP Cloud Run.
 - **Global Caching Layer:** Use CDN + Redis for low-latency retrieval results.
 - **Adaptive Cost Optimization:** Dynamically switch between GPT-4o-mini and GPT-4o based on question complexity.
+
+---
+
+### 3️⃣ Run the App
+
+```bash
+streamlit run app.py
+```
+
+## Visit [http://localhost:8501](http://localhost:8501)
+
+## 💬 Using the App
+
+1. **Upload a PDF**  
+   The app automatically chunks and indexes your document into ChromaDB or CSV.
+
+2. **Ask Questions**  
+   Type a query like:
+
+   - “Who is the main character introduced in chapter 1?”
+   - “Summarize the key points of chapter 3.”
+
+3. **Get Contextual Answers**  
+   The system retrieves the most relevant document chunks and uses GPT to generate accurate, context-aware answers.
+
+---
+
+## 📸 Screenshots & User Interface Overview
+
+Below are the screenshots for a visual walkthrough of the Streamlit app.
+
+### 🏠 1.App Home Page
+
+![App Home Page](images/home_page.png)
+
+### 📄 2. PDF Upload Screen
+
+![Upload PDF](images/upload_pdf.png)
+
+### 💬 3. Question & Answer Screen
+
+![Question & Answer](images/query_response.png)
+
+### 💬 4. What the LLM Sees
+
+![What the LLM Sees](images/what_the_LLM_Sees.png)
 
 ---
 
