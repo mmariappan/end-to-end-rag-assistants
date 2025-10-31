@@ -64,22 +64,6 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 
 ---
 
-## ⚙️ Tech Stack
-
-| Layer        | Technology                                 |
-| ------------ | ------------------------------------------ |
-| UI           | Streamlit                                  |
-| Vector DB    | ChromaDB                                   |
-| Embeddings   | SentenceTransformers (`all-mpnet-base-v2`) |
-| LLM          | OpenAI GPT                                 |
-| PDF          | PyMuPDF                                    |
-| Tokenization | NLTK                                       |
-| Hashing      | hashlib                                    |
-| Config       | python-dotenv                              |
-| Data         | pandas                                     |
-
----
-
 ## 🚀 Quick Start
 
 ### 1️⃣ Install
@@ -139,31 +123,6 @@ Run:
 docker build -t rag-pdf-chat .
 docker run -p 8501:8501 -e OPENAI_API_KEY=your_key rag-pdf-chat
 ```
-
----
-
-## 🧩 Troubleshooting
-
-| Issue                      | Solution                                              |
-| -------------------------- | ----------------------------------------------------- |
-| `OPENAI_API_KEY not found` | Add `.env` file                                       |
-| NLTK error                 | `python -c "import nltk; nltk.download('punkt_tab')"` |
-| ChromaDB lock              | Delete `chroma_db/` folder and restart                |
-| Slow performance           | Lower `top_k` or use `gpt-4o-mini`                    |
-
----
-
-## 🧠 How Traditional RAG Works
-
-```
-User Query → Retrieve relevant chunks from ChromaDB → Generate response using GPT-4o-mini
-```
-
-Traditional RAG uses a **query → retrieve → generate** pipeline. It finds top-matching text chunks based on vector similarity and sends them to the LLM for response generation.  
-This approach is fast, reliable, and ideal for **specific** or **factual** queries.
-
-However, it doesn’t include reasoning or self-evaluation — once the model answers, the process ends.  
-That’s where **Agentic RAG** (planned as the next evolution) will add deeper reasoning and reflection capabilities.
 
 ---
 
