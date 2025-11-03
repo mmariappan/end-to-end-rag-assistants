@@ -119,7 +119,27 @@ TOKENIZERS_PARALLELISM=false
 - **Top-K:** number of chunks to retrieve (default = 5)
 - **Chunk Size:** adjustable in `chatpdf_base.py → max_sentences`
 
-### 3. Run the App
+### 3. Load Database with PDFs (Python)
+
+Place your PDF files in the `data/` folder and run:
+
+```python
+from RAGHelper import RAGHelper
+
+# Initialize RAG helper
+rag = RAGHelper(data_dir="data", collection_name="rag_collection")
+
+# Process a PDF
+filename = "data/harrypotter.pdf"  # REPLACE with your own data
+file_hash = rag.calculate_file_hash(filename)  # avoid duplicates
+pages = rag.readPDF(filename)
+chunks = rag.processPages_to_sentences(pages)
+rag.storeInChromaDB(chunks, file_hash=file_hash, deduplicate_chunks=True)
+
+print(f"Loaded {len(chunks)} chunks into ChromaDB")
+```
+
+### 4. Run the App
 
 ```bash
 uv run streamlit run app.py
@@ -127,7 +147,7 @@ uv run streamlit run app.py
 
 Visit [http://localhost:8501](http://localhost:8501)
 
-### 4. Using the App
+### 5. Using the App
 
 1. **Upload a PDF** – The app automatically chunks and indexes your document into ChromaDB
 2. **Ask Questions** – Type queries like:

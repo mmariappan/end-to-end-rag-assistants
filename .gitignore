@@ -24,13 +24,6 @@ dist/
 .ipynb_checkpoints
 *.ipynb
 
-# Data files
-data/*.pdf
-data/*.csv
-data/*.json
-data/*.txt
-chapter_summaries.txt
-
 # ChromaDB (will be recreated on cloud)
 chroma_db/
 
