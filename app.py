@@ -7,7 +7,7 @@ import pandas as pd
 from RAGHelper import RAGHelper
 from io import BytesIO
 
-st.set_page_config(page_title="RAG PDF Chat", layout="wide", page_icon="📚")
+st.set_page_config(page_title="End-to-end RAG Architecture", layout="wide", page_icon="📚")
 
 # ----------------------------------------------------------
 # STYLES
@@ -41,7 +41,7 @@ st.markdown("""
 # ----------------------------------------------------------
 st.markdown("""
 <div class="main-header">
-    <h1 style="margin:0; font-size: 2.5rem;">📚 RAG PDF Chat Assistant</h1>
+    <h1 style="margin:0; font-size: 2.5rem;">📚 End-to-end RAG Architecture</h1>
     <p style="margin-top: 0.5rem; font-size: 1.1rem; opacity: 0.9;">
         Retrieval-Augmented Generation powered by ChromaDB & OpenAI
     </p>
