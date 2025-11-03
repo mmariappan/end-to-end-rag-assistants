@@ -1,4 +1,4 @@
-# 📚 End to End RAG Architecture
+# 📚 End-to-end RAG Architecture
 
 > **AI-powered PDF chat assistant** using Retrieval-Augmented Generation (RAG), ChromaDB, and OpenAI GPT models.
 > Upload PDFs, ask natural-language questions, and get **accurate, source-grounded answers** with full context visibility.
