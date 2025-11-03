@@ -40,28 +40,43 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 
 ## ✨ Core Features
 
-### PDF Upload & Processing
-
-- Streamlit-based drag-and-drop interface
-- Automatic extraction, chunking, and embedding
-- Real-time progress and summary statistics
-
-### Smart Deduplication
-
-- File- and chunk-level SHA-256 hashing
-- Avoids duplicate storage across revisions
-- Saves 40–60% storage on repeated uploads
-
-### Semantic Search
-
-- Uses `all-mpnet-base-v2` embeddings
-- Cosine-similarity retrieval (Top-K configurable)
-
-### AI-Powered Q&A
-
-- Models: `gpt-4o-mini`, `gpt-4o`, `gpt-4-turbo`
-- Temperature = 0.2 for factual answers
-- Automatic context-building and prompt expansion
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>📤 PDF Upload & Processing</h3>
+      <ul>
+        <li>Streamlit-based drag-and-drop interface</li>
+        <li>Automatic extraction, chunking, and embedding</li>
+        <li>Real-time progress and summary statistics</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🔐 Smart Deduplication</h3>
+      <ul>
+        <li>File- and chunk-level SHA-256 hashing</li>
+        <li>Avoids duplicate storage across revisions</li>
+        <li>Saves 40–60% storage on repeated uploads</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🔍 Semantic Search</h3>
+      <ul>
+        <li>Uses <code>all-mpnet-base-v2</code> embeddings</li>
+        <li>Cosine-similarity retrieval (Top-K configurable)</li>
+      </ul>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🤖 AI-Powered Q&A</h3>
+      <ul>
+        <li>Models: <code>gpt-4o-mini</code>, <code>gpt-4o</code>, <code>gpt-4-turbo</code></li>
+        <li>Temperature = 0.2 for factual answers</li>
+        <li>Automatic context-building and prompt expansion</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -84,10 +99,9 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 ### 1. Install
 
 ```bash
-git clone https://github.com/mmariappan/rag-pdf-chat-assistant.git
-cd rag-pdf-chat-assistant
-python -m venv venv && source venv/bin/activate
-pip install -r requirements.txt
+git clone https://github.com/mmariappan/end-to-end-rag-architecture
+cd end-to-end-rag-architecture
+uv sync
 ```
 
 ### 2. Configure Environment
@@ -108,7 +122,7 @@ TOKENIZERS_PARALLELISM=false
 ### 3. Run the App
 
 ```bash
-streamlit run app.py
+uv run streamlit run app.py
 ```
 
 Visit [http://localhost:8501](http://localhost:8501)
