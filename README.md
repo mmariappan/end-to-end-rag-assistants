@@ -1,6 +1,6 @@
 # 📚 End-to-end RAG Architecture
 
-> **AI-powered PDF chat assistant** using Retrieval-Augmented Generation (RAG), ChromaDB, and OpenAI GPT models.
+> **AI-powered PDF chat assistant** using Retrieval-Augmented Generation (RAG), ChromaDB, and your choice of LLMs (OpenAI GPT or Ollama open-source models).
 > Upload PDFs, ask natural-language questions, and get **accurate, source-grounded answers** with full context visibility.
 
 ---
@@ -32,7 +32,8 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 - **PDF Processing** – Text extraction and chunking via PyMuPDF + NLTK
 - **Semantic Search** – 768-dim embeddings with SentenceTransformers
 - **ChromaDB Storage** – Persistent, deduplicated vector database
-- **AI-Powered Q&A** – Contextual responses from OpenAI GPT models
+- **Dual LLM Support** – Choose between OpenAI GPT or Ollama open-source models
+- **AI-Powered Q&A** – Contextual responses from your chosen LLM
 - **Transparency** – Shows retrieved chunks and similarity scores
 - **Fast** – Retrieves context in milliseconds
 
@@ -70,7 +71,8 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
     <td width="50%" valign="top">
       <h3>🤖 AI-Powered Q&A</h3>
       <ul>
-        <li>Models: <code>gpt-4o-mini</code>, <code>gpt-4o</code>, <code>gpt-4-turbo</code></li>
+        <li><strong>OpenAI:</strong> <code>gpt-4o-mini</code>, <code>gpt-4o</code>, <code>gpt-4-turbo</code></li>
+        <li><strong>Ollama:</strong> <code>llama3.2</code>, <code>llama3.1</code>, <code>mistral</code>, <code>qwen2.5</code></li>
         <li>Temperature = 0.2 for factual answers</li>
         <li>Automatic context-building and prompt expansion</li>
       </ul>
@@ -88,7 +90,8 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 | ------------------------ | ------------------------------------ |
 | **Streamlit UI**         | Web interface for upload & chat      |
 | **ChatPDF Base**         | PDF parsing, chunking, deduplication |
-| **RAGHelper**            | Query handling, GPT API calls        |
+| **RAGHelper**            | Query handling, LLM API calls        |
+| **OpenAI / Ollama**      | LLM providers for answer generation  |
 | **ChromaDB**             | Vector store for embeddings          |
 | **SentenceTransformers** | Generates semantic embeddings        |
 
@@ -106,6 +109,8 @@ uv sync
 
 ### 2. Configure Environment
 
+**For OpenAI (Proprietary):**
+
 Create a `.env` file:
 
 ```bash
@@ -113,9 +118,19 @@ OPENAI_API_KEY=your_openai_api_key
 TOKENIZERS_PARALLELISM=false
 ```
 
+**For Ollama (Open Source):**
+
+1. Install Ollama: [https://ollama.com/download](https://ollama.com/download) or `brew install ollama`
+2. Pull a model: `ollama pull llama3.2:3b`
+3. Ollama will start automatically (runs at `http://localhost:11434`)
+
+See [OLLAMA_SETUP.md](OLLAMA_SETUP.md) for detailed Ollama setup instructions.
+
 **Configuration Options:**
 
-- **Model:** choose `gpt-4o-mini`, `gpt-4o`, or `gpt-4-turbo`
+- **LLM Provider:** OpenAI or Ollama (selected in UI)
+- **OpenAI Models:** `gpt-4o-mini`, `gpt-4o`, `gpt-4-turbo`
+- **Ollama Models:** `llama3.2:3b`, `llama3.1:8b`, `mistral:7b`, `qwen2.5:7b`
 - **Top-K:** number of chunks to retrieve (default = 5)
 - **Chunk Size:** adjustable in `chatpdf_base.py → max_sentences`
 
@@ -149,11 +164,19 @@ Visit [http://localhost:8501](http://localhost:8501)
 
 ### 5. Using the App
 
-1. **Upload a PDF** – The app automatically chunks and indexes your document into ChromaDB
-2. **Ask Questions** – Type queries like:
+1. **Select LLM Provider** – In the sidebar, choose between:
+   - **OpenAI** (requires API key in `.env`)
+   - **Ollama (Open Source)** (requires Ollama installed and model pulled)
+
+2. **Upload a PDF** – The app automatically chunks and indexes your document into ChromaDB
+
+3. **Ask Questions** – Type queries like:
    - "Who is the main character introduced in chapter 1?"
    - "Summarize the key points of chapter 3."
-3. **Get Contextual Answers** – The system retrieves relevant chunks and uses GPT to generate accurate, context-aware answers
+
+4. **Get Contextual Answers** – The system retrieves relevant chunks and uses your chosen LLM to generate accurate, context-aware answers
+
+**Note:** For complete Ollama setup and troubleshooting, see [OLLAMA_SETUP.md](OLLAMA_SETUP.md) or [OPEN_SOURCE_LLM_OPTIONS.md](OPEN_SOURCE_LLM_OPTIONS.md)
 
 ---
 

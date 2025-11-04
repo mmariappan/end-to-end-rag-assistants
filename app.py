@@ -5,6 +5,7 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import streamlit as st
 import pandas as pd
 from RAGHelper import RAGHelper
+from RAGHelperOllama import RAGHelperOllama
 from io import BytesIO
 
 st.set_page_config(page_title="End-to-end RAG Architecture", layout="wide", page_icon="📚")
@@ -97,7 +98,7 @@ with st.expander("ℹ️ What is this app?", expanded=False):
             <h4>💬 Ask Questions</h4>
             <ul>
                 <li>Ask natural language questions about your PDFs</li>
-                <li>Get answers powered by OpenAI GPT models</li>
+                <li>Get answers powered by OpenAI GPT or Ollama open-source models</li>
                 <li>See the exact context sent to the AI</li>
                 <li>View which document chunks were used</li>
                 <li>Transparent and explainable AI responses</li>
@@ -110,7 +111,7 @@ with st.expander("ℹ️ What is this app?", expanded=False):
             <h4>🛠️ Manage Your Data</h4>
             <ul>
                 <li>View collection statistics and summaries</li>
-                <li>Choose different OpenAI models (GPT-4, GPT-4o, etc.)</li>
+                <li>Choose between OpenAI or Ollama models</li>
                 <li>Adjust top-K retrieval parameter</li>
                 <li>Reset ChromaDB to start fresh</li>
             </ul>
@@ -125,14 +126,16 @@ with st.expander("ℹ️ What is this app?", expanded=False):
     4. **Store**: Vectors are stored in ChromaDB for fast similarity search
     5. **Query**: You ask a question in natural language
     6. **Retrieve**: System finds the most relevant chunks using vector similarity
-    7. **Generate**: OpenAI GPT model generates an answer based on retrieved context
+    7. **Generate**: Your chosen LLM (OpenAI GPT or Ollama) generates an answer based on retrieved context
     8. **Display**: You see the answer, context, and source chunks
 
     ### 🚀 Tech Stack
     - **Frontend**: Streamlit
     - **Vector DB**: ChromaDB (persistent storage)
     - **Embeddings**: SentenceTransformers (`all-mpnet-base-v2`)
-    - **LLM**: OpenAI GPT (gpt-4o-mini, gpt-4o, gpt-4-turbo)
+    - **LLM Options**:
+      - OpenAI GPT (gpt-4o-mini, gpt-4o, gpt-4-turbo)
+      - Ollama (llama3.2, llama3.1, mistral, qwen2.5)
     - **PDF Processing**: PyMuPDF
     - **Text Processing**: NLTK
     """)
@@ -147,8 +150,37 @@ st.sidebar.header("⚙️ Configuration")
 data_dir = "data"
 os.makedirs(data_dir, exist_ok=True)
 
-# Model selection
-model_id = st.sidebar.selectbox("Model", ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"])
+# LLM Provider selection
+llm_provider = st.sidebar.radio(
+    "LLM Provider",
+    ["OpenAI", "Ollama (Open Source)"],
+    help="Choose between OpenAI GPT models or open-source models via Ollama"
+)
+
+# Model selection based on provider
+if llm_provider == "OpenAI":
+    model_id = st.sidebar.selectbox(
+        "Model",
+        ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
+        help="Select OpenAI model"
+    )
+else:  # Ollama
+    model_id = st.sidebar.selectbox(
+        "Model",
+        [
+            "llama3.2:3b",
+            "llama3.1:8b",
+            "mistral:7b",
+            "qwen2.5:7b"
+        ],
+        help="Select Ollama model (must be pulled first with 'ollama pull')"
+    )
+    ollama_base_url = st.sidebar.text_input(
+        "Ollama Server URL",
+        value="http://localhost:11434/v1",
+        help="Ollama server endpoint"
+    )
+
 top_k = st.sidebar.slider("Top K Chunks", 1, 10, 5)
 
 
@@ -156,7 +188,15 @@ top_k = st.sidebar.slider("Top K Chunks", 1, 10, 5)
 # ----------------------------------------------------------
 # INIT RAG HELPER
 # ----------------------------------------------------------
-rag = RAGHelper(data_dir=data_dir, collection_name="rag_collection", model_id=model_id)
+if llm_provider == "OpenAI":
+    rag = RAGHelper(data_dir=data_dir, collection_name="rag_collection", model_id=model_id)
+else:  # Ollama
+    rag = RAGHelperOllama(
+        data_dir=data_dir,
+        collection_name="rag_collection",
+        model_id=model_id,
+        ollama_base_url=ollama_base_url
+    )
 
 # ----------------------------------------------------------
 # PDF UPLOAD AND PROCESSING
@@ -274,7 +314,7 @@ else:
     st.warning("No summary available yet. Please process a PDF first.")
 
 # Display the model being used
-st.info(f"🤖 **Question Answering Model:** {model_id}")
+st.info(f"🤖 **Question Answering Model:** {model_id} ({llm_provider})")
 
 # ----------------------------------------------------------
 # ASK A QUESTION
