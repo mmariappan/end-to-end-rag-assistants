@@ -80,7 +80,7 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 
 ## 🏗️ Architecture
 
-![RAG PDF Chat Architecture](images/Architecture.png)
+![RAG PDF Chat Architecture](images/rag_architecture.png)
 
 - **Document Ingestion**: PDF → each page → sentences/chunks → SHA-256 hash for deduplication
 - **Embedding & Storage**: Sentence-transformer embeddings → store in ChromaDB vector store
