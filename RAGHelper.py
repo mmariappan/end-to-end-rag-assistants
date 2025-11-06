@@ -4,28 +4,66 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 
-# RAGHelper class extending ChatPDF for OpenAI GPT models
 class RAGHelper(ChatPDF):
-    # Initialize with data directory, collection name, and model ID
-    def __init__(self, data_dir="data", collection_name="rag_collection", model_id="gpt-4o-mini"):
+    """
+    Unified RAG Helper supporting both OpenAI and Ollama LLM providers.
+    Uses OpenAI-compatible API for both providers.
+    """
+
+    def __init__(
+        self,
+        data_dir="data",
+        collection_name="rag_collection",
+        provider="ollama",  # "openai" or "ollama"
+        model_id=None,
+        ollama_base_url="http://localhost:11434/v1"
+    ):
         """
-        RAG Helper using OpenAI GPT models with ChromaDB.
-        Loads API credentials from .env automatically.
+        Initialize RAG Helper with choice of LLM provider.
+
+        Args:
+            data_dir: Directory for PDF storage
+            collection_name: ChromaDB collection name
+            provider: "openai" or "ollama" (default: "ollama")
+            model_id: Model identifier (auto-selected if None)
+            ollama_base_url: Ollama server endpoint (only used for Ollama)
         """
         # Load environment variables from .env
         load_dotenv()
+
         # Initialize the base ChatPDF class (ChromaDB only)
         super().__init__(data_dir=data_dir, collection_name=collection_name)
 
-        # Initialize OpenAI client
+        # Store provider
+        self.provider = provider.lower()
+
+        # Initialize based on provider
+        if self.provider == "openai":
+            self._init_openai(model_id)
+        elif self.provider == "ollama":
+            self._init_ollama(model_id, ollama_base_url)
+        else:
+            raise ValueError(f"Unknown provider: {provider}. Use 'openai' or 'ollama'")
+
+    def _init_openai(self, model_id=None):
+        """Initialize OpenAI client"""
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
             raise ValueError("OPENAI_API_KEY not found. Please set it in your .env file.")
-        self.client = OpenAI(api_key=self.api_key)
 
-        # Model ID
-        self.model_id = model_id
-        # print(f"Using OpenAI model: {model_id}")
+        self.client = OpenAI(api_key=self.api_key)
+        self.model_id = model_id or "gpt-4o-mini"
+        print(f"Using OpenAI model: {self.model_id}")
+
+    def _init_ollama(self, model_id=None, ollama_base_url="http://localhost:11434/v1"):
+        """Initialize Ollama client"""
+        self.ollama_base_url = ollama_base_url
+        self.client = OpenAI(
+            base_url=ollama_base_url,
+            api_key="ollama"  # Ollama doesn't require API key but OpenAI client needs something
+        )
+        self.model_id = model_id or "llama3.2:3b"
+        print(f"Using Ollama model: {self.model_id} at {ollama_base_url}")
 
     # ------------------------------------------------------------- #
     # Search with query expansion
@@ -47,7 +85,6 @@ class RAGHelper(ChatPDF):
                 query += " OR " + " OR ".join(words)
         return query
 
-
     # ------------------------------------------------------------- #
     # Build structured prompt
     # ------------------------------------------------------------- #
@@ -58,7 +95,6 @@ class RAGHelper(ChatPDF):
         """
         query_expanded = self._expand_query(query)
         results = self.search(query=query_expanded, top_k=top_k)
-        #print(results)
 
         # If nothing retrieved at all
         if not results:
@@ -69,6 +105,7 @@ class RAGHelper(ChatPDF):
                             f"Please reply exactly:\n"
                             f"The context provided does not contain the answer to the question:\n{query}"}
             ]
+
         # Build context text
         context_blocks = [
             f"📄 Source p.{r.get('page_number', '?')}:\n{r.get('text', '').strip()}"
@@ -89,10 +126,11 @@ class RAGHelper(ChatPDF):
         - Be concise and direct (1–2 sentences maximum).
         - Never mention "context missing" unless truly absent or unrelated.
         """.strip()
-        
+
         # Add any additional system instructions
         if system_instructions_dict:
             base_system_instructions += "\n\nAdditional instructions:\n" + str(system_instructions_dict)
+
         # Final messages
         messages = [
             {"role": "system", "content": base_system_instructions},
@@ -102,7 +140,7 @@ class RAGHelper(ChatPDF):
         return messages
 
     def print_messages(self, messages):
-        # Print messages for debugging
+        """Print messages for debugging"""
         for i, m in enumerate(messages, 1):
             pass
             # print(f"\n🔹 {i}. {m['role'].upper()} MESSAGE")
@@ -113,24 +151,45 @@ class RAGHelper(ChatPDF):
     # Main query interface
     # ------------------------------------------------------------- #
     def ask(self, query, top_k=5, system_instructions_dict=None):
+        """
+        Ask a question and get an answer from the configured LLM provider.
+
+        Args:
+            query: User question
+            top_k: Number of chunks to retrieve
+            system_instructions_dict: Additional system instructions
+
+        Returns:
+            Model's answer as string
+        """
         # Build messages
-        messages = self.build_context_prompt(query=query,
-                                             top_k=top_k,
-                                             system_instructions_dict=system_instructions_dict)
-        # Print messages for debugging
-        # print(f"\nSending query to OpenAI ({self.model_id})...\n")
-        # self.print_messages(messages)
-        # Call OpenAI chat completion
-        completion = self.client.chat.completions.create(
-            model=self.model_id,
-            messages=messages,
-            temperature=0.2,
-            max_tokens=300,
+        messages = self.build_context_prompt(
+            query=query,
+            top_k=top_k,
+            system_instructions_dict=system_instructions_dict
         )
-        return completion.choices[0].message.content.strip() if completion.choices[0].message.content else ""
 
+        try:
+            # Call LLM (works for both OpenAI and Ollama via OpenAI-compatible API)
+            completion = self.client.chat.completions.create(
+                model=self.model_id,
+                messages=messages,
+                temperature=0.2,
+                max_tokens=300,
+            )
+            return completion.choices[0].message.content.strip() if completion.choices[0].message.content else ""
 
-    # Get summary info from the ChromaDB collection
+        except Exception as e:
+            if self.provider == "ollama":
+                return (f"Error calling Ollama server: {str(e)}\n\n"
+                       f"Please ensure Ollama is running and the model '{self.model_id}' is installed.\n\n"
+                       f"Install with: ollama pull {self.model_id}")
+            else:
+                return f"Error calling OpenAI API: {str(e)}"
+
+    # ------------------------------------------------------------- #
+    # Get summary info from ChromaDB
+    # ------------------------------------------------------------- #
     def get_summary_info(self):
         """
         Get summary information from ChromaDB collection.
@@ -140,10 +199,18 @@ class RAGHelper(ChatPDF):
             count = self.collection.count()
 
             if count == 0:
-                return {"Chunks": 0, "Collection": "Empty", "Embedding Model": "all-mpnet-base-v2", "Dimension": "N/A"}
+                return {
+                    "Chunks": 0,
+                    "Collection": "Empty",
+                    "Embedding Model": "all-mpnet-base-v2",
+                    "Dimension": "N/A"
+                }
 
             # Get a sample to determine stats (including embeddings)
-            sample = self.collection.get(limit=min(count, 100), include=["documents", "metadatas", "embeddings"])
+            sample = self.collection.get(
+                limit=min(count, 100),
+                include=["documents", "metadatas", "embeddings"]
+            )
 
             # Calculate average chunk length from sample
             texts = sample.get("documents", [])
@@ -175,6 +242,3 @@ class RAGHelper(ChatPDF):
             print(traceback.format_exc())
             # Return a default dict instead of empty so UI shows something
             return {"Error": str(e)}
-
-    
-    

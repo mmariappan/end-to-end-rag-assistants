@@ -5,7 +5,6 @@ os.environ["TOKENIZERS_PARALLELISM"] = "false"
 import streamlit as st
 import pandas as pd
 from RAGHelper import RAGHelper
-from RAGHelperOllama import RAGHelperOllama
 from io import BytesIO
 
 st.set_page_config(page_title="End-to-end RAG Architecture", layout="wide", page_icon="📚")
@@ -189,14 +188,20 @@ top_k = st.sidebar.slider("Top K Chunks", 1, 10, 5)
 # INIT RAG HELPER
 # ----------------------------------------------------------
 if llm_provider == "Ollama (Open Source)":
-    rag = RAGHelperOllama(
+    rag = RAGHelper(
         data_dir=data_dir,
         collection_name="rag_collection",
+        provider="ollama",
         model_id=model_id,
         ollama_base_url=ollama_base_url
     )
 else:  # OpenAI
-    rag = RAGHelper(data_dir=data_dir, collection_name="rag_collection", model_id=model_id)
+    rag = RAGHelper(
+        data_dir=data_dir,
+        collection_name="rag_collection",
+        provider="openai",
+        model_id=model_id
+    )
 
 # ----------------------------------------------------------
 # PDF UPLOAD AND PROCESSING

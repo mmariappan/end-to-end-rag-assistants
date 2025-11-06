@@ -2,7 +2,12 @@
 
 > **AI-powered PDF chat assistant** using Retrieval-Augmented Generation (RAG), ChromaDB, and your choice of LLMs (Ollama open-source models or OpenAI GPT).
 > Upload PDFs, ask natural-language questions, and get **accurate, source-grounded answers** with full context visibility.
-> **100% free and private** with local Ollama models, or use OpenAI for cloud-based inference.
+> **100% free and private** with local open-source Ollama models, or use OpenAI for cloud-based inference.
+
+### Why this matters
+
+- Documents like white-papers, manuals, legal briefs and research reports still hide knowledge. This tool turns them from static blobs into interactive knowledge bases.
+- Many systems claim to “chat with your documents” but hide the retrieval step or don’t show provenance. This one shows you the chunks, how they were selected and how the answer was formed.
 
 ---
 
@@ -74,7 +79,6 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
       <ul>
         <li><strong>Ollama (Default):</strong> <code>llama3.2</code>, <code>llama3.1</code>, <code>mistral</code>, <code>qwen2.5</code> - Free & Local</li>
         <li><strong>OpenAI (Optional):</strong> <code>gpt-4o-mini</code>, <code>gpt-4o</code>, <code>gpt-4-turbo</code> - Cloud-based</li>
-        <li>Temperature = 0.2 for factual answers</li>
         <li>Automatic context-building and prompt expansion</li>
       </ul>
     </td>
@@ -87,14 +91,11 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 
 ![RAG PDF Chat Architecture](images/End_to_end_RAG_Architecture.png)
 
-| Component                | Description                          |
-| ------------------------ | ------------------------------------ |
-| **Streamlit UI**         | Web interface for upload & chat      |
-| **ChatPDF Base**         | PDF parsing, chunking, deduplication |
-| **RAGHelper**            | Query handling, LLM API calls        |
-| **Ollama / OpenAI**      | LLM providers for answer generation  |
-| **ChromaDB**             | Vector store for embeddings          |
-| **SentenceTransformers** | Generates semantic embeddings        |
+- **Document Ingestion**: PDF → each page → sentences/chunks → SHA-256 hash for deduplication
+- **Embedding & Storage**: Sentence-transformer embeddings → store in ChromaDB vector store
+- **Query Handling**: Accept user query → retrieve top-k relevant chunks → pass them + query into LLM → return answer + provenance
+- **LLM Choice**: open-source models (e.g., llama3.2, mistral, qwen2.5) or OpenAI models (gpt-4o, gpt-4-turbo)
+- **UI**: Streamlit interface for upload, chat & inspection of retrieval results.
 
 ---
 
@@ -112,11 +113,22 @@ uv sync
 
 **Option A: Ollama (Recommended - Free & Local)**
 
-1. Install Ollama: [https://ollama.com/download](https://ollama.com/download) or `brew install ollama`
-2. Pull a model: `ollama pull llama3.2:3b`
-3. Ollama will start automatically (runs at `http://localhost:11434`)
+```bash
+# 1. Download ollama
+# Visit https://ollama.com/download and install
+brew install ollama
 
-See [OLLAMA_SETUP.md](OLLAMA_SETUP.md) for detailed setup instructions.
+# 2. Pull model and start chatting
+ollama pull llama3.2:3b
+curl http://localhost:11434/api/chat -d '{"model":"llama3.2:3b","messages":[{"role":"user","content":"Hello!"}],"stream":false}'
+```
+
+**Recommended Models:**
+
+- `llama3.2:3b` - Fast, works on 8GB+ RAM, great for development
+- `llama3.1:8b` - Better reasoning, requires 16GB+ RAM
+- `mistral:7b` - Strong performance, 16GB+ RAM
+- `qwen2.5:7b` - Excellent instruction following, 16GB+ RAM
 
 **Option B: OpenAI (Cloud-based)**
 
@@ -166,20 +178,18 @@ Visit [http://localhost:8501](http://localhost:8501)
 ### 5. Using the App
 
 1. **Select LLM Provider** – In the sidebar, choose:
+
    - **Ollama (Open Source)** - Recommended, free, runs locally (requires Ollama installed and model pulled)
    - **OpenAI** - Cloud-based alternative (requires API key in `.env`)
 
 2. **Upload a PDF** – The app automatically chunks and indexes your document into ChromaDB
 
 3. **Ask Questions** – Type queries like:
+
    - "Who is the main character introduced in chapter 1?"
    - "Summarize the key points of chapter 3."
 
 4. **Get Contextual Answers** – The system retrieves relevant chunks and uses your chosen LLM to generate accurate, context-aware answers
-
-**Note:** For complete Ollama setup and troubleshooting, see [OLLAMA_SETUP.md](OLLAMA_SETUP.md) or [OPEN_SOURCE_LLM_OPTIONS.md](OPEN_SOURCE_LLM_OPTIONS.md)
-
-**Why Ollama?** 100% free, runs locally on your Mac, keeps your data private, and performs excellently on Apple Silicon with Metal acceleration.
 
 ---
 
