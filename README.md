@@ -4,11 +4,6 @@
 > Upload PDFs, ask natural-language questions, and get **accurate, source-grounded answers** with full context visibility.
 > **100% free and private** with local open-source Ollama models, or use OpenAI for cloud-based inference.
 
-### Why this matters
-
-- Documents like white-papers, manuals, legal briefs and research reports still hide knowledge. This tool turns them from static blobs into interactive knowledge bases.
-- Many systems claim to “chat with your documents” but hide the retrieval step or don’t show provenance. This one shows you the chunks, how they were selected and how the answer was formed.
-
 ---
 
 ## 📑 Table of Contents
@@ -33,15 +28,11 @@
 RAG PDF Chat Assistant combines **semantic search** and **large language models** to help you intelligently query and understand PDF documents.
 It extracts, chunks, embeds, and stores document text for fast, context-aware retrieval and question answering.
 
-### Key Highlights
+### Why this matters
 
-- **PDF Processing** – Text extraction and chunking via PyMuPDF + NLTK
-- **Semantic Search** – 768-dim embeddings with SentenceTransformers
-- **ChromaDB Storage** – Persistent, deduplicated vector database
-- **Dual LLM Support** – Choose between Ollama open-source models (free, local) or OpenAI GPT (cloud-based)
-- **AI-Powered Q&A** – Contextual responses from your chosen LLM
-- **Transparency** – Shows retrieved chunks and similarity scores
-- **Fast** – Retrieves context in milliseconds
+- Documents like white-papers, manuals, legal briefs and research reports still hide knowledge. This tool turns them from static blobs into interactive knowledge bases.
+- Many systems claim to “chat with your documents” but hide the retrieval step or don’t show provenance. This one shows you the chunks, how they were selected and how the answer was formed.
+- **Flexibility**: run everything locally (free, private) or plug in cloud LLMs when you need more power.
 
 ---
 
