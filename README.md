@@ -80,7 +80,7 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 
 ## 🏗️ Architecture
 
-![RAG PDF Chat Architecture](images/ragarchitecture.png)
+![RAG PDF Chat Architecture](images/rag-architecture.png)
 
 - **Document Ingestion**: PDF → each page → sentences/chunks → SHA-256 hash for deduplication
 - **Embedding & Storage**: Sentence-transformer embeddings → store in ChromaDB vector store
@@ -192,21 +192,21 @@ Below are the screenshots for a visual walkthrough of the Streamlit app.
   <tr>
     <td width="50%">
       <b>1. App Home Page</b><br/>
-      <img src="images/homepage.png" alt="App Home Page" style="width:100%; height:300px; object-fit:cover;"/>
+      <img src="images/home-page.png" alt="App Home Page" />
     </td>
     <td width="50%">
       <b>2. PDF Upload Screen</b><br/>
-      <img src="images/uploadpdf.png" alt="Upload PDF" style="width:100%; height:300px; object-fit:cover;"/>
+      <img src="images/upload-pdf.png" alt="Upload PDF" />
     </td>
   </tr>
   <tr>
     <td width="50%">
       <b>3. Question & Answer Screen</b><br/>
-      <img src="images/queryresponse.png" alt="Question & Answer" style="width:100%; height:300px; object-fit:cover;"/>
+      <img src="images/query-response.png" alt="Question & Answer" />
     </td>
     <td width="50%">
       <b>4. What the LLM Sees</b><br/>
-      <img src="images/whatthellmsees.png" alt="What the LLM Sees" style="width:100%; height:300px; object-fit:cover;"/>
+      <img src="images/llm-view.png" alt="What the LLM Sees" />
     </td>
   </tr>
 </table>
