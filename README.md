@@ -1,7 +1,8 @@
 # 📚 End-to-end RAG Architecture
 
-> **AI-powered PDF chat assistant** using Retrieval-Augmented Generation (RAG), ChromaDB, and your choice of LLMs (OpenAI GPT or Ollama open-source models).
+> **AI-powered PDF chat assistant** using Retrieval-Augmented Generation (RAG), ChromaDB, and your choice of LLMs (Ollama open-source models or OpenAI GPT).
 > Upload PDFs, ask natural-language questions, and get **accurate, source-grounded answers** with full context visibility.
+> **100% free and private** with local Ollama models, or use OpenAI for cloud-based inference.
 
 ---
 
@@ -32,7 +33,7 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 - **PDF Processing** – Text extraction and chunking via PyMuPDF + NLTK
 - **Semantic Search** – 768-dim embeddings with SentenceTransformers
 - **ChromaDB Storage** – Persistent, deduplicated vector database
-- **Dual LLM Support** – Choose between OpenAI GPT or Ollama open-source models
+- **Dual LLM Support** – Choose between Ollama open-source models (free, local) or OpenAI GPT (cloud-based)
 - **AI-Powered Q&A** – Contextual responses from your chosen LLM
 - **Transparency** – Shows retrieved chunks and similarity scores
 - **Fast** – Retrieves context in milliseconds
@@ -71,8 +72,8 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
     <td width="50%" valign="top">
       <h3>🤖 AI-Powered Q&A</h3>
       <ul>
-        <li><strong>OpenAI:</strong> <code>gpt-4o-mini</code>, <code>gpt-4o</code>, <code>gpt-4-turbo</code></li>
-        <li><strong>Ollama:</strong> <code>llama3.2</code>, <code>llama3.1</code>, <code>mistral</code>, <code>qwen2.5</code></li>
+        <li><strong>Ollama (Default):</strong> <code>llama3.2</code>, <code>llama3.1</code>, <code>mistral</code>, <code>qwen2.5</code> - Free & Local</li>
+        <li><strong>OpenAI (Optional):</strong> <code>gpt-4o-mini</code>, <code>gpt-4o</code>, <code>gpt-4-turbo</code> - Cloud-based</li>
         <li>Temperature = 0.2 for factual answers</li>
         <li>Automatic context-building and prompt expansion</li>
       </ul>
@@ -91,7 +92,7 @@ It extracts, chunks, embeds, and stores document text for fast, context-aware re
 | **Streamlit UI**         | Web interface for upload & chat      |
 | **ChatPDF Base**         | PDF parsing, chunking, deduplication |
 | **RAGHelper**            | Query handling, LLM API calls        |
-| **OpenAI / Ollama**      | LLM providers for answer generation  |
+| **Ollama / OpenAI**      | LLM providers for answer generation  |
 | **ChromaDB**             | Vector store for embeddings          |
 | **SentenceTransformers** | Generates semantic embeddings        |
 
@@ -107,9 +108,17 @@ cd end-to-end-rag-architecture
 uv sync
 ```
 
-### 2. Configure Environment
+### 2. Configure LLM Provider
 
-**For OpenAI (Proprietary):**
+**Option A: Ollama (Recommended - Free & Local)**
+
+1. Install Ollama: [https://ollama.com/download](https://ollama.com/download) or `brew install ollama`
+2. Pull a model: `ollama pull llama3.2:3b`
+3. Ollama will start automatically (runs at `http://localhost:11434`)
+
+See [OLLAMA_SETUP.md](OLLAMA_SETUP.md) for detailed setup instructions.
+
+**Option B: OpenAI (Cloud-based)**
 
 Create a `.env` file:
 
@@ -118,19 +127,11 @@ OPENAI_API_KEY=your_openai_api_key
 TOKENIZERS_PARALLELISM=false
 ```
 
-**For Ollama (Open Source):**
-
-1. Install Ollama: [https://ollama.com/download](https://ollama.com/download) or `brew install ollama`
-2. Pull a model: `ollama pull llama3.2:3b`
-3. Ollama will start automatically (runs at `http://localhost:11434`)
-
-See [OLLAMA_SETUP.md](OLLAMA_SETUP.md) for detailed Ollama setup instructions.
-
 **Configuration Options:**
 
-- **LLM Provider:** OpenAI or Ollama (selected in UI)
-- **OpenAI Models:** `gpt-4o-mini`, `gpt-4o`, `gpt-4-turbo`
-- **Ollama Models:** `llama3.2:3b`, `llama3.1:8b`, `mistral:7b`, `qwen2.5:7b`
+- **LLM Provider:** Ollama (default) or OpenAI (selected in UI)
+- **Ollama Models:** `llama3.2:3b`, `llama3.1:8b`, `mistral:7b`, `qwen2.5:7b` - Free, runs locally
+- **OpenAI Models:** `gpt-4o-mini`, `gpt-4o`, `gpt-4-turbo` - Paid, cloud-based
 - **Top-K:** number of chunks to retrieve (default = 5)
 - **Chunk Size:** adjustable in `chatpdf_base.py → max_sentences`
 
@@ -164,9 +165,9 @@ Visit [http://localhost:8501](http://localhost:8501)
 
 ### 5. Using the App
 
-1. **Select LLM Provider** – In the sidebar, choose between:
-   - **OpenAI** (requires API key in `.env`)
-   - **Ollama (Open Source)** (requires Ollama installed and model pulled)
+1. **Select LLM Provider** – In the sidebar, choose:
+   - **Ollama (Open Source)** - Recommended, free, runs locally (requires Ollama installed and model pulled)
+   - **OpenAI** - Cloud-based alternative (requires API key in `.env`)
 
 2. **Upload a PDF** – The app automatically chunks and indexes your document into ChromaDB
 
@@ -177,6 +178,8 @@ Visit [http://localhost:8501](http://localhost:8501)
 4. **Get Contextual Answers** – The system retrieves relevant chunks and uses your chosen LLM to generate accurate, context-aware answers
 
 **Note:** For complete Ollama setup and troubleshooting, see [OLLAMA_SETUP.md](OLLAMA_SETUP.md) or [OPEN_SOURCE_LLM_OPTIONS.md](OPEN_SOURCE_LLM_OPTIONS.md)
+
+**Why Ollama?** 100% free, runs locally on your Mac, keeps your data private, and performs excellently on Apple Silicon with Metal acceleration.
 
 ---
 

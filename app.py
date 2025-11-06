@@ -44,7 +44,7 @@ st.markdown("""
 <div class="main-header">
     <h1 style="margin:0; font-size: 2.5rem;">📚 End-to-end RAG Architecture</h1>
     <p style="margin-top: 0.5rem; font-size: 1.1rem; opacity: 0.9;">
-        Retrieval-Augmented Generation powered by ChromaDB & OpenAI
+        Retrieval-Augmented Generation powered by ChromaDB & Ollama (or OpenAI)
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -98,7 +98,7 @@ with st.expander("ℹ️ What is this app?", expanded=False):
             <h4>💬 Ask Questions</h4>
             <ul>
                 <li>Ask natural language questions about your PDFs</li>
-                <li>Get answers powered by OpenAI GPT or Ollama open-source models</li>
+                <li>Get answers powered by Ollama (free, local) or OpenAI GPT</li>
                 <li>See the exact context sent to the AI</li>
                 <li>View which document chunks were used</li>
                 <li>Transparent and explainable AI responses</li>
@@ -111,7 +111,7 @@ with st.expander("ℹ️ What is this app?", expanded=False):
             <h4>🛠️ Manage Your Data</h4>
             <ul>
                 <li>View collection statistics and summaries</li>
-                <li>Choose between OpenAI or Ollama models</li>
+                <li>Choose between Ollama (default) or OpenAI models</li>
                 <li>Adjust top-K retrieval parameter</li>
                 <li>Reset ChromaDB to start fresh</li>
             </ul>
@@ -126,7 +126,7 @@ with st.expander("ℹ️ What is this app?", expanded=False):
     4. **Store**: Vectors are stored in ChromaDB for fast similarity search
     5. **Query**: You ask a question in natural language
     6. **Retrieve**: System finds the most relevant chunks using vector similarity
-    7. **Generate**: Your chosen LLM (OpenAI GPT or Ollama) generates an answer based on retrieved context
+    7. **Generate**: Your chosen LLM (Ollama or OpenAI GPT) generates an answer based on retrieved context
     8. **Display**: You see the answer, context, and source chunks
 
     ### 🚀 Tech Stack
@@ -134,8 +134,8 @@ with st.expander("ℹ️ What is this app?", expanded=False):
     - **Vector DB**: ChromaDB (persistent storage)
     - **Embeddings**: SentenceTransformers (`all-mpnet-base-v2`)
     - **LLM Options**:
-      - OpenAI GPT (gpt-4o-mini, gpt-4o, gpt-4-turbo)
-      - Ollama (llama3.2, llama3.1, mistral, qwen2.5)
+      - Ollama (llama3.2, llama3.1, mistral, qwen2.5) - Free & Local
+      - OpenAI GPT (gpt-4o-mini, gpt-4o, gpt-4-turbo) - Cloud-based
     - **PDF Processing**: PyMuPDF
     - **Text Processing**: NLTK
     """)
@@ -153,18 +153,12 @@ os.makedirs(data_dir, exist_ok=True)
 # LLM Provider selection
 llm_provider = st.sidebar.radio(
     "LLM Provider",
-    ["OpenAI", "Ollama (Open Source)"],
-    help="Choose between OpenAI GPT models or open-source models via Ollama"
+    ["Ollama (Open Source)", "OpenAI"],
+    help="Choose between Ollama open-source models (free, local) or OpenAI GPT (cloud-based)"
 )
 
 # Model selection based on provider
-if llm_provider == "OpenAI":
-    model_id = st.sidebar.selectbox(
-        "Model",
-        ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
-        help="Select OpenAI model"
-    )
-else:  # Ollama
+if llm_provider == "Ollama (Open Source)":
     model_id = st.sidebar.selectbox(
         "Model",
         [
@@ -180,6 +174,12 @@ else:  # Ollama
         value="http://localhost:11434/v1",
         help="Ollama server endpoint"
     )
+else:  # OpenAI
+    model_id = st.sidebar.selectbox(
+        "Model",
+        ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo"],
+        help="Select OpenAI model"
+    )
 
 top_k = st.sidebar.slider("Top K Chunks", 1, 10, 5)
 
@@ -188,15 +188,15 @@ top_k = st.sidebar.slider("Top K Chunks", 1, 10, 5)
 # ----------------------------------------------------------
 # INIT RAG HELPER
 # ----------------------------------------------------------
-if llm_provider == "OpenAI":
-    rag = RAGHelper(data_dir=data_dir, collection_name="rag_collection", model_id=model_id)
-else:  # Ollama
+if llm_provider == "Ollama (Open Source)":
     rag = RAGHelperOllama(
         data_dir=data_dir,
         collection_name="rag_collection",
         model_id=model_id,
         ollama_base_url=ollama_base_url
     )
+else:  # OpenAI
+    rag = RAGHelper(data_dir=data_dir, collection_name="rag_collection", model_id=model_id)
 
 # ----------------------------------------------------------
 # PDF UPLOAD AND PROCESSING
