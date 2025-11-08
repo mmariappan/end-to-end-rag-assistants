@@ -109,7 +109,10 @@ uv sync
 # Visit https://ollama.com/download and install
 brew install ollama
 
-# 2. Pull model and start chatting
+# 2. Start the Ollama App
+ollama serve
+
+# 3. In Another Terminal Pull model and start chatting
 ollama pull llama3.2:3b
 curl http://localhost:11434/api/chat -d '{"model":"llama3.2:3b","messages":[{"role":"user","content":"Hello!"}],"stream":false}'
 ```
