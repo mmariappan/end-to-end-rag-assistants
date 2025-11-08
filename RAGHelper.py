@@ -206,9 +206,9 @@ class RAGHelper(ChatPDF):
                     "Dimension": "N/A"
                 }
 
-            # Get a sample to determine stats (including embeddings)
+            # Get all items to determine accurate stats (including embeddings)
             sample = self.collection.get(
-                limit=min(count, 100),
+                limit=count,
                 include=["documents", "metadatas", "embeddings"]
             )
 
